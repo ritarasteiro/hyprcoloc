@@ -934,6 +934,7 @@ rapid.hyprcoloc <- function(Zsq, Wsq, prior.1, prior.2, uniform.priors){
 #' @param uniform.priors uniform priors
 #' @param ind.traits are the traits independent or to be treated as independent
 #' @param snpscores output estimated posterior probability explained each SNP
+#' @param dataset gwasglue2 DataSet object
 #' @return A data.frame of HyPrColoc results: each row is a cluster of colocalized traits or is coded NA (if no colocalization is identified)
 #' @return If snpscores=TRUE: additionally returns a list of posterior probability explained by each SNPs and for each cluster of colocalized traits identified
 #' @import compiler Rmpfr iterpc Matrix
@@ -955,71 +956,26 @@ rapid.hyprcoloc <- function(Zsq, Wsq, prior.1, prior.2, uniform.priors){
 #' # Colocalisation analyses
 #' results <- hyprcoloc(betas, ses, trait.names=traits, snp.id=rsid)
 #' @export
-# hyprcoloc <- function(effect.est, effect.se, binary.outcomes = rep(0, dim(effect.est)[2]), 
-#                       trait.subset = c(1:dim(effect.est)[2]), trait.names = c(1:dim(effect.est)[2]), 
-#                       snp.id = c(1:dim(effect.est)[1]), ld.matrix = diag(1, dim(effect.est)[1], dim(effect.est)[1]),
-#                       trait.cor = diag(1, dim(effect.est)[2], dim(effect.est)[2]), 
-#                       sample.overlap = matrix(rep(1,dim(effect.est)[2]^2) , nrow = dim(effect.est)[2]), 
-#                       bb.alg = TRUE, bb.selection = "regional", 
-#                       reg.steps = 1, reg.thresh = "default", align.thresh = "default", 
-#                       prior.1 = 1e-4, prior.c = 0.02, prior.12 = NULL, 
-#                       sensitivity = FALSE, sense.1 = 1, sense.2 = 2, 
-#                       uniform.priors = FALSE, ind.traits = FALSE, snpscores=FALSE){
-# 
-#   if(any(is.na(effect.est))) stop("there are missing values in effect.est")
-#   if(any(is.na(effect.se))) stop("there are missing values in effect.se")
-#   if(any(effect.se==0)) stop("there are zero values in effect.se")
-#   if(any(is.na(binary.outcomes))) stop("there are missing values in binary.outcomes")
-#   if(any(!(binary.outcomes %in% c(0,1)))) stop("there are missing values in binary.outcomes")
-#   if(any(is.na(trait.subset))) stop("there are missing values in trait.subset")
-#   if(any(is.na(trait.names))) stop("there are missing values in trait.names")
-#   if(any(is.na(snp.id))) stop("there are missing values in snp.id")
-#   if(any(is.na(ld.matrix))) stop("there are missing values in ld.matrix")
-#   if(any(is.na(trait.cor))) stop("there are missing values in trait.cor")
-#   if(any(is.na(sample.overlap))) stop("there are missing values in sample.overlap")
-  
-  hyprcoloc <- function(dataset, binary.outcomes = NA, 
-                        trait.subset = NA, trait.names = NA, 
-                        snp.id = NA, ld.matrix = NA,
-                        trait.cor = NA, 
-                        sample.overlap =NA , nrow = NA, 
-                        bb.alg = TRUE, bb.selection = "regional", 
-                        reg.steps = 1, reg.thresh = "default", align.thresh = "default", 
-                        prior.1 = 1e-4, prior.c = 0.02, prior.12 = NULL, 
-                        sensitivity = FALSE, sense.1 = 1, sense.2 = 2, 
-                        uniform.priors = FALSE, ind.traits = FALSE, snpscores=FALSE){
+  hyprcoloc <- function(effect.est = NULL, effect.se = NULL, binary.outcomes = rep(0, dim(effect.est)[2]), 
+                        trait.subset = c(1:dim(effect.est)[2]), trait.names = c(1:dim(effect.est)[2]),
+                        snp.id = c(1:dim(effect.est)[1]), ld.matrix = diag(1, dim(effect.est)[1], dim(effect.est)[1]),
+                        trait.cor = diag(1, dim(effect.est)[2], dim(effect.est)[2]),
+                        sample.overlap = matrix(rep(1,dim(effect.est)[2]^2) , nrow = dim(effect.est)[2]),
+                        bb.alg = TRUE, bb.selection = "regional",
+                        reg.steps = 1, reg.thresh = "default", align.thresh = "default",
+                        prior.1 = 1e-4, prior.c = 0.02, prior.12 = NULL,
+                        sensitivity = FALSE, sense.1 = 1, sense.2 = 2,
+                        uniform.priors = FALSE, ind.traits = FALSE, snpscores=FALSE, dataset = NULL){
+
     
-    nb_traits <- length(dataset@summary_sets)
-    nb_rsid <- dim(dataset@summary_sets[[1]]@ss)
-    effect.est <- matrix(ncol = nb_traits,nrow=nb_rsid)
-    colnames(effect.est) <- trait.names
-    effect.se <- matrix(ncol = nb_traits,nrow=nb_rsid)
-    colnames(effect.se) <- trait.names
-    
-    for (i in 1:nb_traits){
-      
-      effect.est[,i] <- dataset@summary_sets[[i]]@ss$beta
-      effect.se[,i] <- dataset@summary_sets[[i]]@ss$se
+    if(!is.null(dataset)){
+    gwasglue2::dataset_to_hyprcoloc(datset)
     }
     
-    rownames(effect.est) <- dataset@summary_sets[[1]]@ss$rsid
-    rownames(effect.se) <- dataset@summary_sets[[1]]@ss$rsid
     
     if(any(is.na(effect.est))) stop("there are missing values in effect.est")
     if(any(is.na(effect.se))) stop("there are missing values in effect.se")
     if(any(effect.se==0)) stop("there are zero values in effect.se")
-
-    
-    if( is.na(binary.outcomes)) { binary.outcomes = rep(0, dim(effect.est)[2]))} 
-    if(is.na(trait.subset)) {trait.subset = c(1:dim(effect.est)[2])}
-    if(is.na(trait.names)) {trait.names = c(1:dim(effect.est)[2])} 
-    if(is.na(snp.id)){snp.id = c(1:dim(effect.est)[1])}
-    if(is.na(ld.matrix)){ld.matrix = diag(1, dim(effect.est)[1], dim(effect.est)[1]}
-    if(is.na(trait.cor)){trait.cor = diag(1, dim(effect.est)[2], dim(effect.est)[2])}, 
-    if(is.na(sample.overlap)){sample.overlap = matrix(rep(1,dim(effect.est)[2]^2)} 
-    if(is.na(nrow)){nrow = dim(effect.est)[2])}
-    
-    
     if(any(is.na(binary.outcomes))) stop("there are missing values in binary.outcomes")
     if(any(!(binary.outcomes %in% c(0,1)))) stop("there are missing values in binary.outcomes")
     if(any(is.na(trait.subset))) stop("there are missing values in trait.subset")
