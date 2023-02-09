@@ -969,7 +969,7 @@ rapid.hyprcoloc <- function(Zsq, Wsq, prior.1, prior.2, uniform.priors){
 
     
     if(!is.null(dataset)){
-    gwasglue2::dataset_to_hyprcoloc(datset)
+    gwasglue2::dataset_to_hyprcoloc(dataset)
     }
     
     
