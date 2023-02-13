@@ -969,7 +969,12 @@ rapid.hyprcoloc <- function(Zsq, Wsq, prior.1, prior.2, uniform.priors){
 
     
     if(!is.null(dataset)){
-    gwasglue2::dataset_to_hyprcoloc(dataset)
+      g <- gwasglue2::dataset_to_hyprcoloc(dataset)
+      trait.names <- g[[1]]
+      snp.id <- g[[2]]
+      ld.matrix <- g[[3]]
+      effect.est <- g[[4]]
+      effect.se <- g[[5]]
     }
     
     
