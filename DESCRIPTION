@@ -11,7 +11,7 @@ ByteCompile: TRUE
 LazyData: TRUE
 Encoding: UTF-8
 Imports: iterpc, Rcpp, RcppEigen, Rmpfr, compiler, Matrix, knitr, rmarkdown, pheatmap, RColorBrewer
-Remotes: ritarasteiro/gwasglue2
+Remotes: mrc/gwasglue2
 LinkingTo: Rcpp, RcppEigen
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
