@@ -5,8 +5,8 @@
 \title{HyPrColoc}
 \usage{
 hyprcoloc(
-  effect.est,
-  effect.se,
+  effect.est = NULL,
+  effect.se = NULL,
   binary.outcomes = rep(0, dim(effect.est)[2]),
   trait.subset = c(1:dim(effect.est)[2]),
   trait.names = c(1:dim(effect.est)[2]),
@@ -27,7 +27,8 @@ hyprcoloc(
   sense.2 = 2,
   uniform.priors = FALSE,
   ind.traits = FALSE,
-  snpscores = FALSE
+  snpscores = FALSE,
+  dataset = NULL
 )
 }
 \arguments{
@@ -76,6 +77,8 @@ hyprcoloc(
 \item{ind.traits}{are the traits independent or to be treated as independent}
 
 \item{snpscores}{output estimated posterior probability explained each SNP}
+
+\item{dataset}{gwasglue2 DataSet object}
 }
 \value{
 A data.frame of HyPrColoc results: each row is a cluster of colocalized traits or is coded NA (if no colocalization is identified)
