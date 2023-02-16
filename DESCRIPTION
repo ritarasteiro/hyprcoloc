@@ -12,7 +12,7 @@ LazyData: TRUE
 Encoding: UTF-8
 Imports: iterpc, Rcpp, RcppEigen, Rmpfr, compiler, Matrix, knitr, rmarkdown, pheatmap, RColorBrewer
 Suggests: gwasglue2
-Remotes: mrcieu/gwasglue2
+Remotes: mrcieu/gwasglue2@finemap_coloc
 LinkingTo: Rcpp, RcppEigen
 VignetteBuilder: knitr
 RoxygenNote: 7.2.1
