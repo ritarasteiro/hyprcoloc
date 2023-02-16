@@ -956,8 +956,6 @@ rapid.hyprcoloc <- function(Zsq, Wsq, prior.1, prior.2, uniform.priors){
 #' # Colocalisation analyses
 #' results <- hyprcoloc(betas, ses, trait.names=traits, snp.id=rsid)
 #' @export
-#' @importFrom gwasglue2 dataset_to_hyprcoloc
-#' @importClassesFrom gwasglue2 DataSet
   hyprcoloc <- function(effect.est = NULL, effect.se = NULL, binary.outcomes = rep(0, dim(effect.est)[2]), 
                         trait.subset = c(1:dim(effect.est)[2]), trait.names = c(1:dim(effect.est)[2]),
                         snp.id = c(1:dim(effect.est)[1]), ld.matrix = diag(1, dim(effect.est)[1], dim(effect.est)[1]),
@@ -971,7 +969,7 @@ rapid.hyprcoloc <- function(Zsq, Wsq, prior.1, prior.2, uniform.priors){
 
     
     if(!is.null(dataset)){
-      g <- dataset_to_hyprcoloc(dataset)
+      g <- gwasglue2::dataset_to_hyprcoloc(dataset)
       trait.names <- g[[1]]
       snp.id <- g[[2]]
       ld.matrix <- g[[3]]
