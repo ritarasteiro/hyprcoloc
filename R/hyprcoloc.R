@@ -975,10 +975,7 @@ rapid.hyprcoloc <- function(Zsq, Wsq, prior.1, prior.2, uniform.priors){
       ld.matrix <- g[[3]]
       effect.est <- g[[4]]
       effect.se <- g[[5]]
-    }else{
-      effect.est <- effect.est
-      effect.se <- effect.se
-      }
+    }
     
     
     if(any(is.na(effect.est))) stop("there are missing values in effect.est")
